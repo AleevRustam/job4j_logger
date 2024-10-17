@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.job4j.utils.LastLineReader.readLastLineFromFile;
 
 class LoggerTest {
     private Logger logger;
@@ -18,8 +19,8 @@ class LoggerTest {
     @BeforeEach
     public void setUp() {
         List<Appender> appenders = new ArrayList<>();
-        appenders.add(new ConsoleAppender()); // Добавляем консольный аппендер
-        appenders.add(new FileAppender("logs/debug.txt"));
+        appenders.add(new ConsoleAppender(LogLevel.DEBUG));
+        appenders.add(new FileAppender("logs/test_log.txt", LogLevel.DEBUG));
         logger = new Logger("TestLogger", LogLevel.DEBUG, appenders);
         outContent = new ByteArrayOutputStream();
         originalOut = System.out;
@@ -28,10 +29,18 @@ class LoggerTest {
 
     @Test
     public void testDebugLogging() {
-        logger.debug("This is a debug message");
+        String message = "This is a debug message";
+        String logLevel = "DEBUG";
+        logger.debug(message);
+
         String output = outContent.toString();
-        assertTrue(output.contains("DEBUG"));
-        assertTrue(output.contains("This is a debug message"));
+        assertTrue(output.contains(logLevel));
+        assertTrue(output.contains(message));
+
+        String lastLine = readLastLineFromFile("logs/test_log.txt");
+        assertTrue(lastLine.contains(logLevel));
+        assertTrue(lastLine.contains(message));
+
         System.setOut(originalOut);
     }
 
@@ -55,10 +64,18 @@ class LoggerTest {
 
     @Test
     public void testErrorLogging() {
-        logger.error("This is an error message");
+        String message = "This is an error message";
+        String logLevel = "ERROR";
+        logger.error(message);
         String output = outContent.toString();
-        assertTrue(output.contains("ERROR"));
-        assertTrue(output.contains("This is an error message"));
+        assertTrue(output.contains(logLevel));
+        assertTrue(output.contains(message));
+
+        String lastLine = readLastLineFromFile("logs/test_log.txt");
+        assertTrue(lastLine.contains(logLevel));
+        assertTrue(lastLine.contains(message));
+
+
         System.setOut(originalOut);
     }
 }

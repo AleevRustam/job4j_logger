@@ -7,10 +7,11 @@ import java.io.IOException;
 
 public class FileAppender implements Appender {
     private String filePath;
+    private LogLevel logLevel;
 
-    public FileAppender(String filePath) {
+    public FileAppender(String filePath, LogLevel logLevel) {
         this.filePath = filePath;
-        createLogDirectory();
+        this.logLevel = logLevel;
     }
 
     private void createLogDirectory() {
@@ -29,5 +30,10 @@ public class FileAppender implements Appender {
         } catch (IOException e) {
             System.err.println("Ошибка записи в файл: " + e.getMessage());
         }
+    }
+
+    @Override
+    public LogLevel getLogLevel() {
+        return logLevel;
     }
 }

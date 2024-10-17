@@ -22,7 +22,7 @@ class FileAppenderTest {
             testFile.delete();
         }
 
-        fileAppender = new FileAppender(TEST_FILE_PATH);
+        fileAppender = new FileAppender(TEST_FILE_PATH, LogLevel.DEBUG);
     }
 
     @AfterEach

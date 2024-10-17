@@ -13,7 +13,7 @@ class ConsoleAppenderTest {
 
     @BeforeEach
     public void setUp() {
-        consoleAppender = new ConsoleAppender();
+        consoleAppender = new ConsoleAppender(LogLevel.INFO);
     }
 
     @Test

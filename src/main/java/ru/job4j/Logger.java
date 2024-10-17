@@ -21,12 +21,14 @@ public class Logger {
         List<Appender> appenders = new ArrayList<>();
 
         if (config.getProperty("log4j.appender.CONSOLE_LOG") != null) {
-            appenders.add(new ConsoleAppender());
+            LogLevel consoleLevel = LogLevel.valueOf(config.getProperty("log4j.appender.CONSOLE_LOG.Threshold"));
+            appenders.add(new ConsoleAppender(consoleLevel));
         }
 
         if (config.getProperty("log4j.appender.FILE_LOG") != null) {
             String filePath = config.getProperty("log4j.appender.FILE_LOG.file");
-            appenders.add(new FileAppender(filePath));
+            LogLevel fileLevel = LogLevel.valueOf(config.getProperty("log4j.appender.FILE_LOG.Threshold"));
+            appenders.add(new FileAppender(filePath, fileLevel));
         }
 
         return new Logger(loggerName, loggerLevel, appenders);
@@ -37,9 +39,7 @@ public class Logger {
             String formattedMessage = String.format("[%s] [%s]: %s", level, name, message);
 
             for (Appender appender : appenders) {
-                if ((level == LogLevel.INFO || level == LogLevel.WARN) && appender instanceof ConsoleAppender) {
-                    appender.append(formattedMessage);
-                } else if (level == LogLevel.DEBUG || level == LogLevel.ERROR) {
+                if (level.getPriority() >= appender.getLogLevel().getPriority()) {
                     appender.append(formattedMessage);
                 }
             }
